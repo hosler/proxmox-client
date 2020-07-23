@@ -1,0 +1,27 @@
+{
+  "name": "proxmox-client",
+  "version": "1.0.0",
+  "description": "A client for the proxmox api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeefoIO/proxmox-client.git"
+  },
+  "keywords": [
+    "proxmox",
+    "api",
+    "http"
+  ],
+  "author": "Benjamin Grziwok <bgrziwok@grziwok-services.de>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/BeefoIO/proxmox-client/issues"
+  },
+  "homepage": "https://github.com/BeefoIO/proxmox-client#readme",
+  "dependencies": {
+    "superagent": "^5.3.1"
+  }
+}
