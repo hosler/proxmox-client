@@ -10,7 +10,7 @@ class Proxmox {
     this.Proxmox = Proxmox;
   }
 
-  connect(host, user, tokenName, token, realm = 'pam') {
+  auth(host, user, tokenName, token, realm = 'pam') {
     this.baseUrl = `https://${host}/api2/json`;
     this.user = user;
     this.tokenName = tokenName;
