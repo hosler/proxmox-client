@@ -28,24 +28,47 @@ class Proxmox {
     if(method !== 'get' &&  method !== 'delete') {
       req.set('Content-Type', 'application/x-www-form-urlencoded');
     }
-    req.send(body);
+    req.send(body).catch();
+	if(req === undefined || req === "undefined") {
+		req = { data: "error" }
+	}
     return req;
   }
 
   async get(path) {
-    return await this.call('GET', path, '');
+   var response =	await this.call('GET', path, '');
+   if(typeof response === undefined || response === "undefined") {
+		response = { data: "error" }
+	}
+   return response
   }
   async post(path, body) {
-    return await this.call('POST', path, body);
+   var response =	await this.call('POST', path, body);
+   if(typeof response === undefined || response === "undefined") {
+		response = { data: "error" }
+	}
+   return response
   }
   async put(path, body) {
-    return await this.call('PUT', path, body);
+	var response = await this.call('PUT', path, body);
+	if(typeof response === undefined || response === "undefined") {
+		response = { data: "error" }
+	}
+	return response
   }
   async delete(path) {
-    return await this.call('DELETE', path, '');
+	var response = await this.call('DELETE', path, '');
+	if(typeof response === undefined || response === "undefined") {
+		response = { data: "error" }
+	} 
+	return response
   }
   async del(path) {
-    return await this.call('DELETE', path, '');
+	var response = await this.call('DELETE', path, '');
+	if(typeof response === undefined || response === "undefined") {
+		response = { data: "error" }
+	} 
+	    return response
   }
 }
 
