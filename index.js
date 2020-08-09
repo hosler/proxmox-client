@@ -26,7 +26,7 @@ class Proxmox {
   }
 
   async call(method, path, body) {
-    method = method.toLocaleUpperCase()
+    method = method.toLocaleLowerCase()
     var req = http[method](`${this.baseUrl}${path}`);
     var contentType = 'application/x-www-form-urlencoded';
     req.set('Authorization', `PVEAPIToken=${this.tokenInfo}=${this.token}`);
@@ -47,7 +47,7 @@ class Proxmox {
     if(method == 'POST' &&  method == 'PUT') {
       req.set('Content-Type', contentType);
     }
-    logHttp(`sending ${method} request to ${this.baseUrl}${path}`);
+    logHttp(`sending ${method.toLocaleUpperCase()} request to ${this.baseUrl}${path}`);
     req.send(body).catch();
     if(req === undefined || req === "undefined") {
       req = { data: "error" }
