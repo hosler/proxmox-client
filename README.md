@@ -81,6 +81,10 @@ Sends a DELETE Request to the defined path and returns a superagent request
 
 Sends a DELETE Request to the defined path and returns a superagent request
 
+## Debugging
+
+You can enable the debug outputs by setting the DEBUG environment variable to 'proxmox:*'.
+
 ## License
 
 GPL-3.0
