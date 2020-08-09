@@ -33,11 +33,13 @@ proxmox.get('/nodes').then((res) => {
 const proxmox = require('proxmox-client');
 
 proxmox.auth('localhost:8006', 'root', 'tokenName', 'token', 'pam');
+// or
+proxmox.auth('localhost:8006', 'root@pam!testToken', 'token');
 
 // possible other file
 const proxmox = require('proxmox-client');
 
-proxmox.post('/nodes/testnode/qemu/100/status/reboot', "node=testnode&vmid=100&timeout=15000").then((res) => {
+proxmox.post('/nodes/testnode/qemu/100/status/reboot', {timeout: 1500}).then((res) => {
   if(res.status !== 200) {
     console.log("statusCode is not 200");
   }
@@ -49,7 +51,11 @@ proxmox.post('/nodes/testnode/qemu/100/status/reboot', "node=testnode&vmid=100&t
 
 ### `proxmox.auth(host, user, tokenName, token, realm = 'pam')`
 
-Stores tha auth information
+Stores the auth information
+
+### `proxmox.auth(host, tokenInfo, token)`
+
+Stores the auth information
 
 ### `proxmox.get(path)`
 
