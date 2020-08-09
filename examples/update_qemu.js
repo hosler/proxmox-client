@@ -5,4 +5,6 @@ const proxmox = require('../');
 proxmox.post('/nodes/{node}/qemu/{vmid}/config', {name: "newName"}).then(res => {
   res = JSON.parse(res.text).data;
   console.log(res);
+}).catch((err) => {
+  console.log(err);
 });
