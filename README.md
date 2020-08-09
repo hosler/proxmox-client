@@ -13,17 +13,19 @@ A node.js client for the Proxmox API
 ```js
 const proxmox = require('proxmox-client');
 
-proxmox.auth('localhost:8006', 'root', 'tokenName', 'token', 'pam');
-
-// possible other file
-const proxmox = require('proxmox-client');
-
-proxmox.get('/nodes').then((res) => {
-  if(res.status !== 200) {
-    console.log("statusCode is not 200");
-  }
-  res = JSON.parse(res.text).data;
-  console.log(res);
+proxmox.auth('localhost:8006', 'root@pam!testToken', 'token').then(() => {
+  proxmox.get('/nodes').then((res) => {
+    if(res.status !== 200) {
+      console.log("statusCode is not 200");
+    }
+    res = JSON.parse(res.text).data;
+    console.log(res);
+  })
+  .catch((err) => {
+    console.log('Error:', err);
+  });
+  }).catch((err) => {
+  console.log(err);
 });
 ```
 
@@ -32,48 +34,50 @@ proxmox.get('/nodes').then((res) => {
 ```js
 const proxmox = require('proxmox-client');
 
-proxmox.auth('localhost:8006', 'root', 'tokenName', 'token', 'pam');
-// or
-proxmox.auth('localhost:8006', 'root@pam!testToken', 'token');
-
-// possible other file
-const proxmox = require('proxmox-client');
-
-proxmox.post('/nodes/testnode/qemu/100/status/reboot', {timeout: 1500}).then((res) => {
-  if(res.status !== 200) {
-    console.log("statusCode is not 200");
-  }
-  console.log(res);
+proxmox.auth('localhost:8006', 'root@pam!testToken', 'token').then(() => {
+  proxmox.post('/nodes/testnode/qemu/100/status/reboot', {timeout: 1500}).then((res) => {
+    if(res.status !== 200) {
+      console.log("statusCode is not 200");
+    }
+    res = JSON.parse(res.text).data;
+    console.log(res);
+  })
+  .catch((err) => {
+    console.log('Error:', err);
+  });
+  }).catch((err) => {
+    console.log(err);
+  });
 });
 ```
 
 ## API
 
-### `proxmox.auth(host, user, tokenName, token, realm = 'pam')`
+### `proxmox.auth(host, user, tokenName, token, realm = 'pam'): Promise`
 
 Stores the auth information
 
-### `proxmox.auth(host, tokenInfo, token)`
+### `proxmox.auth(host, tokenInfo, token): Promise`
 
 Stores the auth information
 
-### `proxmox.get(path)`
+### `proxmox.get(path): Promise`
 
 Sends a GET Request to the defined path and returns a superagent request
 
-### `proxmox.post(path, body)`
+### `proxmox.post(path, body): Promise`
 
 Sends a POST Request to the defined path with the defined body and returns a superagent request
 
-### `proxmox.put(path, body)`
+### `proxmox.put(path, body): Promise`
 
 Sends a PUT Request to the defined path with the defined body and returns a superagent request
 
-### `proxmox.delete(path)`
+### `proxmox.delete(path): Promise`
 
 Sends a DELETE Request to the defined path and returns a superagent request
 
-### `proxmox.del(path)`
+### `proxmox.del(path): Promise`
 
 Sends a DELETE Request to the defined path and returns a superagent request
 
