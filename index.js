@@ -1,94 +1,117 @@
 const http = require('superagent'),
       debug = require('debug'),
-      log = debug('proxmox:log'),
-      error = debug('proxmox:error'),
-      logHttp = debug('proxmox:http');
+      log = debug('\x1b[34mproxmox:debug'),
+      error = debug('\x1b[30m\x1b[41mproxmox:error\x1b[0m'),
+      logHttp = debug('\x1b[34mproxmox:http');
 
 class Proxmox {
   constructor() {
     this.baseUrl = '';
     this.tokenInfo = '';
     this.token = '';
+    this.authorized = false;
     this.Proxmox = Proxmox;
   }
 
   auth(host, user, tokenName, token, realm = 'pam') {
-    log('got authorization details');
-    this.baseUrl = `https://${host}/api2/json`;
-    this.token = token;
-    if(!token || !token.length) {
-      this.tokenInfo = user;
-      this.token = tokenName;
-      return;
-    }
-    this.tokenInfo = `${user}@${realm}!${tokenName}`;
-    return;
-  }
-
-  async call(method, path, body) {
-    method = method.toLocaleLowerCase()
-    var req = http[method](`${this.baseUrl}${path}`);
-    var contentType = 'application/x-www-form-urlencoded';
-    req.set('Authorization', `PVEAPIToken=${this.tokenInfo}=${this.token}`);
-    if(body == undefined) {
-      body = {};
-    }
-    if(typeof body == 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch(e) {
-
+    return new Promise((resolve, reject) => {
+      this.baseUrl = `https://${host}/api2/json`;
+      this.token = token;
+      if(!token || !token.length) {
+        log('got token info + token');
+        this.tokenInfo = user;
+        this.token = tokenName;
+        this.call('GET', '/', '', true).then((res) => {
+          if(res.status != 200) {
+            this.authorized = false;
+            error('authorization failed');
+            return reject({code: 401, message: "Unauthorized"});
+          }
+          this.authorized = true;
+          log('authorization successfull');
+          return resolve();
+        }).catch((err) => {
+          this.authorized = false;
+          error('authorization failed');
+          return reject({code: err.status, message: err.response.res.statusMessage});
+        });
+        return;
       }
-    }
-    if(typeof body == 'object') {
-      body = JSON.stringify(body);
-      coontentType = 'application/json';
-    }
-    if(method == 'POST' &&  method == 'PUT') {
-      req.set('Content-Type', contentType);
-    }
-    logHttp(`sending ${method.toLocaleUpperCase()} request to ${this.baseUrl}${path}`);
-    req.send(body).catch();
-    if(req === undefined || req === "undefined") {
-      req = { data: "error" }
-    }
-    return req;
+      log('got authorization details');
+      this.call('GET', '/', '').then((res) => {
+        if(res.status != 200) {
+          this.authorized = false;
+          error('authorization failed');
+          return reject({code: 401, message: "Unauthorized"});
+        }
+        this.authorized = true;
+        log('authorization successfull');
+        return resolve();
+      }).catch((err) => {
+        this.authorized = false;
+        error('authorization failed');
+        return reject({code: err.status, message: err.response.res.statusMessage});
+      });
+      this.tokenInfo = `${user}@${realm}!${tokenName}`;
+    });
   }
 
-  async get(path) {
-    var response =	await this.call('GET', path, '');
-    if(typeof response === undefined || response === "undefined") {
-      response = { data: "error" }
-    }
-   return response
+  async call(method, path, body, skipAuthorizationCheck) {
+    return new Promise((resolve, reject) => {
+      if(!this.authorized && !skipAuthorizationCheck) {
+        error('401 Unauthorized');
+        return reject({code: 401, message: 'Unauthorized'});
+      }
+      method = method.toLowerCase()
+      var req = http[method](`${this.baseUrl}${path}`);
+      var contentType = 'application/x-www-form-urlencoded';
+      req.set('Authorization', `PVEAPIToken=${this.tokenInfo}=${this.token}`);
+      if(body == undefined) {
+        body = {};
+      }
+      if(typeof body == 'string') {
+        try {
+          body = JSON.parse(body);
+        } catch(e) {
+
+        }
+      }
+      if(typeof body == 'object') {
+        body = JSON.stringify(body);
+        coontentType = 'application/json';
+      }
+      if(method == 'POST' &&  method == 'PUT') {
+        req.set('Content-Type', contentType);
+      }
+      logHttp(`${method.toUpperCase()} ${this.baseUrl}${path}`);
+      return req.send(body).then((res) => {
+        logHttp(`${method.toUpperCase()} ${this.baseUrl}${path} => ${res.status}`);
+        return resolve(res);
+      }).catch((err) => {
+        if(typeof err.status == "number") {
+          logHttp(`${method.toUpperCase()} ${this.baseUrl}${path} => ${err.status}`);
+          error(err);
+        }
+        return reject(err);
+      });
+    });
+    
   }
-  async post(path, body) {
-    var response =	await this.call('POST', path, body);
-    if(typeof response === undefined || response === "undefined") {
-      response = { data: "error" }
-    }
-   return response
+
+  get(path) {
+    return this.call('GET', path, '');
+  }
+  post(path, body) {
+    return this.call('POST', path, body);
   }
   async put(path, body) {
-    var response = await this.call('PUT', path, body);
-    if(typeof response === undefined || response === "undefined") {
-      response = { data: "error" }
-    }
-    return response
+    return this.call('PUT', path, body);
   }
   async delete(path) {
-    var response = await this.call('DELETE', path, '');
-    if(typeof response === undefined || response === "undefined") {
-      response = { data: "error" }
-    } 
-    return response
+    return this.call('DELETE', path, '');
   }
   async del(path) {
-    var response = await this.call('DELETE', path, '');
-    if(typeof response === undefined || response === "undefined") {
-      response = { data: "error" }
-    } 
-    return response
+    return this.call('DELETE', path, '');
   }
 }
 
