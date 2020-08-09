@@ -1,8 +1,12 @@
 const http = require('superagent'),
       debug = require('debug'),
-      log = debug('\x1b[34mproxmox:debug'),
-      error = debug('\x1b[30m\x1b[41mproxmox:error\x1b[0m'),
-      logHttp = debug('\x1b[34mproxmox:http');
+      log = debug('proxmox:debug'),
+      error = debug('proxmox:error'),
+      logHttp = debug('proxmox:http');
+
+log.color = '208';
+logHttp.color = '208';
+error.color = '9';
 
 class Proxmox {
   constructor() {
