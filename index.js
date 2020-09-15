@@ -37,7 +37,7 @@ class Proxmox {
         }).catch((err) => {
           this.authorized = false;
           error('authorization failed');
-          return reject({code: err.status, message: err.response.res.statusMessage});
+          return reject({code: err.status, message: (err.response && err.response.res ? err.response.res.statusMessage : 'Unknown Error')});
         });
         return;
       }
