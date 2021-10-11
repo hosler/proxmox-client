@@ -1,5 +1,5 @@
 # proxmox-client
-A node.js client for the Proxmox API
+A node.js client for the Proxmox API. Forked and modified to support password auth instead of token auth
 
 <p>
 <a href="https://www.npmjs.com/package/proxmox-client" rel="nofollow"><img src="https://img.shields.io/npm/dw/proxmox-client.svg?logo=npm" alt="npm downloads" style="max-width:100%;"></a>
