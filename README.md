@@ -2,18 +2,16 @@
 A node.js client for the Proxmox API. Forked and modified to support password auth instead of token auth
 
 <p>
-<a href="https://www.npmjs.com/package/proxmox-client" rel="nofollow"><img src="https://img.shields.io/npm/dw/proxmox-client.svg?logo=npm" alt="npm downloads" style="max-width:100%;"></a>
 <a href="https://www.npmjs.com/package/proxmox-client" rel="nofollow"><img src="https://img.shields.io/npm/v/proxmox-client.svg?logo=npm" alt="npm version" style="max-width:100%;"></a>
-<a href="https://github.com/BeefoIO/proxmox-client/blob/master/LICENSE" rel="nofollow"><img src="https://img.shields.io/npm/l/proxmox-client.svg?logo=github" alt="NpmLicense"></a>
-<a href="https://github.com/BeefoIO/proxmox-client/blob/master/" rel="nofollow"><img src="https://img.shields.io/badge/Accepting%20Commits-True-green.svg" alt="Conventional Commits"></a>
-<a href="https://github.com/BeefoIO/proxmox-client/blob/master/" rel="nofollow"><img src="https://img.shields.io/github/package-json/v/BeefoIO/proxmox-client.svg" alt="Conventional Commits"></a>
+<a href="https://github.com/hosler/proxmox-client/blob/master/LICENSE" rel="nofollow"><img src="https://img.shields.io/npm/l/proxmox-client.svg?logo=github" alt="NpmLicense"></a>
+<a href="https://github.com/hosler/proxmox-client/blob/master/" rel="nofollow"><img src="https://img.shields.io/github/package-json/v/hosler/proxmox-client.svg" alt="Conventional Commits"></a>
 
 ## (Get) Usage example
 
 ```js
 const proxmox = require('proxmox-client');
 
-proxmox.auth('localhost:8006', 'root@pam!testToken', 'token').then(() => {
+proxmox.auth('localhost:8006', 'root@pam', 'password').then(() => {
   proxmox.get('/nodes').then((res) => {
     if(res.status !== 200) {
       console.log("statusCode is not 200");
@@ -34,7 +32,7 @@ proxmox.auth('localhost:8006', 'root@pam!testToken', 'token').then(() => {
 ```js
 const proxmox = require('proxmox-client');
 
-proxmox.auth('localhost:8006', 'root@pam!testToken', 'token').then(() => {
+proxmox.auth('localhost:8006', 'root@pam', 'password').then(() => {
   proxmox.post('/nodes/testnode/qemu/100/status/reboot', {timeout: 1500}).then((res) => {
     if(res.status !== 200) {
       console.log("statusCode is not 200");
