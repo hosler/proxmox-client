@@ -24,7 +24,7 @@ class Proxmox {
 
   auth(host, user, password, tokenName, token) {
     return new Promise((resolve, reject) => {
-      this.baseUrl = `${host}/api2/json`;
+      this.baseUrl = host+'/api2/json';
       this.token = token;
 
       if (!this.ticket) {
